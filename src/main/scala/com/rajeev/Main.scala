@@ -1,56 +1,40 @@
 package com.rajeev
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorLogging, ActorSystem, Props}
+import com.rajeev.models.Models.CompressedLogFile
+import com.rajeev.utils.FileUtils
 import com.typesafe.config.ConfigFactory
-import akka.actor.Actor
-import akka.actor.Props
 
-import scala.concurrent.duration._
-import akka.actor.ActorSystem
+import scala.util.{Failure, Success}
 
-import scala.io.StdIn
+
 
 
 /**
   * Created by rajeevprasanna on 9/13/17.
   */
 
-//class PrintMyActorRefActor extends Actor {
-//  override def receive: Receive = {
-//    case "printit" =>
-//            val secondRef = context.actorOf(Props.empty, "second-actor")
-//            println(s"Second : $secondRef")
-//  }
-//}
 
-class SupervisingActor extends Actor {
-  val child = context.actorOf(Props[SupervisedActor], "supervised-actor")
+object Main extends App with ConfigInitialzer {
 
-  override def receive: Receive = {
-    case "failChild" => child ! "fail"
+  val logFileDirectory:String = getString("app.logFileDirectory")
+  val logFileExtensions:List[String] = getStringList("app.fileExtensions")
+  val logFilePrefixes:List[String] = getStringList("app.logFilePrefixes")
+  val files = FileUtils.getListOfFiles(logFileDirectory, logFileExtensions, logFilePrefixes)
+
+  val fileReaderActor = system.actorOf(Props[FileReader], "file-reader-actor")
+
+  files match {
+    case Success(fs) => fileReaderActor ! CompressedLogFile(fs.headOption)
+    case Failure(ex) => println(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
   }
+
+//  system.terminate()
 }
 
-class SupervisedActor extends Actor {
-  override def preStart(): Unit =  println("supervised actor started")
-  override def aroundPostStop(): Unit = println("supervised actor stopped")
-
-  override def receive: Receive = {
-    case "fail" =>
-          println("supervised actor fails now")
-          throw new Exception("I failed!")
-  }
-}
-
-object Main extends App {
-
-  val config = ConfigFactory.load()
-  implicit val system = ActorSystem("AppAnalytics", config)
-  implicit val executionContext = system.dispatcher
-
-  val supervisingActor = system.actorOf(Props[SupervisingActor], "supervising-actor")
-  supervisingActor ! "failChild"
-
+//  val supervisingActor = system.actorOf(Props[SupervisingActor], "supervising-actor")
+//  supervisingActor ! "failChild"
+//
 
 
 //  val firstRef = system.actorOf(Props[PrintMyActorRefActor], "first-actor")
@@ -90,7 +74,35 @@ object Main extends App {
 
 
 
-  println("this is emitted from main class")
-  system.terminate()
-}
 
+
+
+
+
+
+//class PrintMyActorRefActor extends Actor {
+//  override def receive: Receive = {
+//    case "printit" =>
+//            val secondRef = context.actorOf(Props.empty, "second-actor")
+//            println(s"Second : $secondRef")
+//  }
+//}
+//
+//class SupervisingActor extends Actor {
+//  val child = context.actorOf(Props[SupervisedActor], "supervised-actor")
+//
+//  override def receive: Receive = {
+//    case "failChild" => child ! "fail"
+//  }
+//}
+//
+//class SupervisedActor extends Actor {
+//  override def preStart(): Unit =  println("supervised actor started")
+//  override def aroundPostStop(): Unit = println("supervised actor stopped")
+//
+//  override def receive: Receive = {
+//    case "fail" =>
+//      println("supervised actor fails now")
+//      throw new Exception("I failed!")
+//  }
+//}

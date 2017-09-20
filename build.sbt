@@ -31,8 +31,16 @@ libraryDependencies ++= {
     // Commons IO is needed for cleaning up data when testing persistent actors
     "commons-io"                  % "commons-io"       % "2.4",
     "ch.qos.logback"              %  "logback-classic"  % "1.1.3",
-    "org.scalatest"               %% "scalatest"        % "2.2.6"       % "test"
+    "org.scalatest"               %% "scalatest"        % "2.2.6"       % "test",
+
+    "org.apache.commons" % "commons-compress" % "1.5",
+
+    //Mailgun dependencies
+    "com.sun.jersey" % "jersey-client" % "1.19.4",
+    "com.sun.jersey" % "jersey-core" % "1.19.4",
+    "com.sun.jersey.contribs" % "jersey-multipart" % "1.19.4"
   )
 }
+
 
 //mainClass in (Compile, assembly) := Some("com.rajeev.Main")

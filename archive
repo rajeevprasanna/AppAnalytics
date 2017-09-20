@@ -1,0 +1,1 @@
+2017-09-20 18:41:27 +0530  method=GET  uri=/ping  remote-address=0:0:0:0:0:0:0:1   domain=localhost  query-string=   referer=N/A   user-agent=[Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36]  time=2ms  status=200  action=controllers.HealthCheckController.heartbeat
