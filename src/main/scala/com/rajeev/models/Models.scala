@@ -11,6 +11,7 @@ object Models {
     def name:String
     def directory:String
     def fullPath = s"$directory/$name"
+    def toFile = new File(fullPath)
   }
 
   final case class CompressedLogFile(name:String, directory:String) extends AnalyticsFile

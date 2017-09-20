@@ -4,7 +4,7 @@ import java.io.File
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.rajeev.models.Models._
-import com.rajeev.utils.FileUtils
+import com.rajeev.utils.{FileUtils, MailGunUtils}
 
 /**
   * Created by rajeevprasanna on 9/19/17.
@@ -19,6 +19,7 @@ class FileReader extends Actor with ActorLogging {
 
     case extractedLogFile:ExtractedFile =>
             log.info(s"received extracted log file with name => ${extractedLogFile.name}")
+            MailGunUtils.sendEmail(extractedLogFile.toFile)
 
     case x => log.error(s"got event => $x")
   }

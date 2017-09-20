@@ -2,7 +2,7 @@ package com.rajeev
 
 import akka.actor.{ActorLogging, ActorSystem, Props}
 import com.rajeev.models.Models.CompressedLogFile
-import com.rajeev.utils.FileUtils
+import com.rajeev.utils.{FileUtils, MailGunUtils}
 import com.typesafe.config.ConfigFactory
 
 import scala.util.{Failure, Success}
@@ -28,6 +28,8 @@ object Main extends App with ConfigInitialzer {
     case Success(fs) => fileReaderActor ! CompressedLogFile(fs.headOption)
     case Failure(ex) => println(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
   }
+
+
 
 //  system.terminate()
 }
