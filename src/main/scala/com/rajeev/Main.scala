@@ -7,14 +7,9 @@ import com.typesafe.config.ConfigFactory
 
 import scala.util.{Failure, Success}
 
-
-
-
 /**
   * Created by rajeevprasanna on 9/13/17.
   */
-
-
 object Main extends App with ConfigInitialzer {
 
   val logFileDirectory:String = getString("app.logFileDirectory")
@@ -28,12 +23,32 @@ object Main extends App with ConfigInitialzer {
     case Success(fs) => fileReaderActor ! CompressedLogFile(fs.headOption)
     case Failure(ex) => println(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
   }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 //  system.terminate()
-}
-
 //  val supervisingActor = system.actorOf(Props[SupervisingActor], "supervising-actor")
 //  supervisingActor ! "failChild"
 //

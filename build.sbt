@@ -38,7 +38,10 @@ libraryDependencies ++= {
     //Mailgun dependencies
     "com.sun.jersey" % "jersey-client" % "1.19.4",
     "com.sun.jersey" % "jersey-core" % "1.19.4",
-    "com.sun.jersey.contribs" % "jersey-multipart" % "1.19.4"
+    "com.sun.jersey.contribs" % "jersey-multipart" % "1.19.4",
+
+    //File Utils
+    "com.github.pathikrit" % "better-files_2.11" % "2.17.1"
   )
 }
 

@@ -4,9 +4,8 @@ import java.io.File
 import javax.ws.rs.core.MediaType
 
 import com.rajeev.ConfigInitialzer
-import com.sun.jersey.api.client.{Client, ClientResponse}
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter
-import com.sun.jersey.core.util.MultivaluedMapImpl
+import com.sun.jersey.api.client.{Client, ClientResponse}
 import com.sun.jersey.multipart.FormDataMultiPart
 import com.sun.jersey.multipart.file.FileDataBodyPart
 
@@ -30,7 +29,7 @@ object MailGunUtils extends ConfigInitialzer {
     formData.field("from", s"AppAnalytics<mailgun@$MAILGUN_DOMAIN_NAME>")
     formData.field("to", getString("mailgun.toPpl"))
     formData.field("subject", "Plugin app analytics")
-    formData.field("html", "<html>HTML <strong>Check Errors in attachments</strong></html>")
+    formData.field("html", "<html><strong>Check Errors in attachments</strong></html>")
     formData.bodyPart(new FileDataBodyPart("attachment", errorLogFile, MediaType.TEXT_PLAIN_TYPE))
 
     val response = webResource.`type`(MediaType.MULTIPART_FORM_DATA_TYPE).post(classOf[ClientResponse], formData)
