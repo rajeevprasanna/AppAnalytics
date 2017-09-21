@@ -4,6 +4,7 @@ import akka.actor.{ActorLogging, ActorSystem, Props}
 import com.rajeev.models.Models.CompressedLogFile
 import com.rajeev.utils.{FileUtils, MailGunUtils}
 import com.typesafe.config.ConfigFactory
+import org.slf4j.LoggerFactory
 
 import scala.util.{Failure, Success}
 
@@ -11,6 +12,10 @@ import scala.util.{Failure, Success}
   * Created by rajeevprasanna on 9/13/17.
   */
 object Main extends App with ConfigInitialzer {
+
+  final val log = LoggerFactory.getLogger(Main.getClass)
+
+  log.info(s"App analytics started running...")
 
   val logFileDirectory:String = getString("app.logFileDirectory")
   val logFileExtensions:List[String] = getStringList("app.fileExtensions")
@@ -20,7 +25,7 @@ object Main extends App with ConfigInitialzer {
   val fileReaderActor = system.actorOf(Props[FileReader], "file-reader-actor")
 
   files match {
-    case Success(fs) => fileReaderActor ! CompressedLogFile(fs.headOption)
+    case Success(fs) => fs.map(fileReaderActor ! CompressedLogFile(_))
     case Failure(ex) => println(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
   }
 }
