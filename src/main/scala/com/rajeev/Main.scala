@@ -1,12 +1,7 @@
 package com.rajeev
 
-import akka.actor.{ActorLogging, ActorSystem, Props}
-import com.rajeev.models.Models.CompressedLogFile
-import com.rajeev.utils.{FileUtils, MailGunUtils}
-import com.typesafe.config.ConfigFactory
+import akka.actor.Props
 import org.slf4j.LoggerFactory
-
-import scala.util.{Failure, Success}
 
 /**
   * Created by rajeevprasanna on 9/13/17.
@@ -14,20 +9,10 @@ import scala.util.{Failure, Success}
 object Main extends App with ConfigInitialzer {
 
   final val log = LoggerFactory.getLogger(Main.getClass)
-
   log.info(s"App analytics started running...")
 
-  val logFileDirectory:String = getString("app.logFileDirectory")
-  val logFileExtensions:List[String] = getStringList("app.fileExtensions")
-  val logFilePrefixes:List[String] = getStringList("app.logFilePrefixes")
-  val files = FileUtils.getListOfFiles(logFileDirectory, logFileExtensions, logFilePrefixes)
-
-  val fileReaderActor = system.actorOf(Props[FileReader], "file-reader-actor")
-
-  files match {
-    case Success(fs) => fs.map(fileReaderActor ! CompressedLogFile(_))
-    case Failure(ex) => println(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
-  }
+  val supervisorActor = system.actorOf(Props[SupervisorActor], "supervisor-actor")
+  supervisorActor ! "TRIGGER_APP_ANALYTICS"
 }
 
 
