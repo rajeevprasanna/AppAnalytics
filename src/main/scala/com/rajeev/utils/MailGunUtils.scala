@@ -1,7 +1,8 @@
 package com.rajeev.utils
 
-import java.io.File
+
 import javax.ws.rs.core.MediaType
+import better.files._
 
 import com.rajeev.ConfigInitialzer
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter
@@ -30,7 +31,7 @@ object MailGunUtils extends ConfigInitialzer {
     formData.field("to", getString("mailgun.toPpl"))
     formData.field("subject", "Plugin app analytics")
     formData.field("html", "<html><strong>Check Errors in attachments</strong></html>")
-    formData.bodyPart(new FileDataBodyPart("attachment", errorLogFile, MediaType.TEXT_PLAIN_TYPE))
+    formData.bodyPart(new FileDataBodyPart("attachment", errorLogFile.toJava, MediaType.TEXT_PLAIN_TYPE))
 
     val response = webResource.`type`(MediaType.MULTIPART_FORM_DATA_TYPE).post(classOf[ClientResponse], formData)
     val textEntity = response.getEntity(classOf[String])

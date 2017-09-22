@@ -1,6 +1,6 @@
 package com.rajeev
 
-import java.io.File
+import better.files._
 
 import akka.actor.SupervisorStrategy.Restart
 import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props, SupervisorStrategy}

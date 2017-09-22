@@ -1,12 +1,10 @@
 package com.rajeev.utils
 
-import java.io.File
-import java.util.zip
+import better.files._
 import scala.util.Try
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import java.io.BufferedInputStream
 import java.nio.file.Files
-import java.nio.file.Paths
 
 
 /**
@@ -18,20 +16,20 @@ object FileUtils {
   // success => Success(List[File])
   def getListOfFiles(dirPath:String, extensions:List[String], prefixes:List[String]):Try[List[File]] = {
     Try{
-      val dir = new File(dirPath)
-      dir.listFiles.filter(_.isFile).toList.filter { file =>
-        extensions.exists(file.getName.endsWith(_)) && prefixes.exists(file.getName.startsWith(_))
+      val dir = file"$dirPath"
+      dir.list.filter(!_.isDirectory).toList.filter { file =>
+        extensions.contains(file.extension.getOrElse("")) && prefixes.exists(file.name.startsWith(_))
       }
     }
   }
 
-  def extractFile(fileName:String, dirPath:String): File = {
-    val inFile = new File(s"$dirPath/$fileName")
-    val fin = Files.newInputStream(inFile.toPath)
+  def extractFile(fileName:String, dirPath:String, outputDirectory:String): File = {
+    val inFile = file"$dirPath/$fileName"
+    val fin = Files.newInputStream(inFile.path)
     val in = new BufferedInputStream(fin)
 
-    val outFile = new File(s"${dirPath}/${fileName.split(".gz").head}.log")
-    val out = Files.newOutputStream(outFile.toPath)
+    val outFile = file"${outputDirectory}/${fileName.split(".gz").head}.log"
+    val out = Files.newOutputStream(outFile.path)
     val gzIn = new GzipCompressorInputStream(in)
 
     val buffer = new Array[Byte](1024)
