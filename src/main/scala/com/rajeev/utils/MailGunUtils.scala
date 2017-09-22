@@ -27,16 +27,16 @@ object MailGunUtils extends ConfigInitialzer {
   val webResource = mailClient.resource("https://api.mailgun.net/v3/" + MAILGUN_DOMAIN_NAME  + "/messages")
 
   def sendEmail = (errorLogFile:File) => {
-//    val formData = new FormDataMultiPart()
-//    formData.field("from", s"AppAnalytics<mailgun@$MAILGUN_DOMAIN_NAME>")
-//    formData.field("to", getString("mailgun.toPpl"))
-//    formData.field("subject", "Plugin app analytics")
-//    formData.field("html", "<html><strong>Check Errors in attachments</strong></html>")
-//    formData.bodyPart(new FileDataBodyPart("attachment", errorLogFile.toJava, MediaType.TEXT_PLAIN_TYPE))
-//
-//    val response = webResource.`type`(MediaType.MULTIPART_FORM_DATA_TYPE).post(classOf[ClientResponse], formData)
-//    val textEntity = response.getEntity(classOf[String])
-//    assert(response.getStatus() == 200, textEntity)
+    val formData = new FormDataMultiPart()
+    formData.field("from", s"AppAnalytics<mailgun@$MAILGUN_DOMAIN_NAME>")
+    formData.field("to", getString("mailgun.toPpl"))
+    formData.field("subject", "Plugin app analytics")
+    formData.field("html", "<html><strong>Check Errors in attachments</strong></html>")
+    formData.bodyPart(new FileDataBodyPart("attachment", errorLogFile.toJava, MediaType.TEXT_PLAIN_TYPE))
+
+    val response = webResource.`type`(MediaType.MULTIPART_FORM_DATA_TYPE).post(classOf[ClientResponse], formData)
+    val textEntity = response.getEntity(classOf[String])
+    assert(response.getStatus() == 200, textEntity)
   }
 
   def sendTextMail = (mailText:String) => {
