@@ -39,7 +39,7 @@ libraryDependencies ++= {
     "com.sun.jersey.contribs" % "jersey-multipart" % "1.19.4",
 
     //File Utils
-    "com.github.pathikrit" % "better-files_2.12" % "3.0.0"
+    "com.github.pathikrit" % "better-files_2.12" % "3.1.0"
   )
 }
 

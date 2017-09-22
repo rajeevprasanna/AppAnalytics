@@ -10,15 +10,14 @@ import com.rajeev.utils.FileUtils
   */
 class FileExtractor extends Actor with ActorLogging with ConfigInitialzer {
 
-  val outputDirectory = getString("app.outputDirectory")
+  val outputDirectory = file"${getString("app.outputDirectory")}"
 
   override def preStart(): Unit = {
       super.preStart()
-      val directory = file"$outputDirectory"
-      if(!directory.exists) directory.createDirectory()
+      if(!outputDirectory.exists) outputDirectory.createDirectory()
   }
 
   override def receive: Receive = {
-    case logfile:CompressedLogFile => sender ! FileUtils.extractFile(logfile, outputDirectory)
+    case logfile:CompressedLogFile => sender ! FileUtils.extractFile(logfile, outputDirectory.pathAsString)
   }
 }
