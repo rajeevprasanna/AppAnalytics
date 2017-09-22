@@ -20,7 +20,7 @@ class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
 
   override def supervisorStrategy: SupervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 3, withinTimeRange = 60 minutes) {
-      case ex: Exception => mailLogError(s"Exception occurred in child actor. ex => ${ex.getStackTrace}")
+      case ex: Exception => mailLogError(s"Exception occurred in child actor. ex => ${ex.getLocalizedMessage}")
                             Restart
     }
 
@@ -28,8 +28,8 @@ class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
   val logFileExtensions:List[String] = getStringList("app.fileExtensions")
   val logFilePrefixes:List[String] = getStringList("app.logFilePrefixes")
 
-  var unprocessedFiles = List[File]()
-  var processingFiles = List[File]()
+  var unprocessedFiles = List.empty[File]
+  var processingFiles = List.empty[File]
 
   override def receive: Receive = {
 
@@ -38,11 +38,12 @@ class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
 
     case TRIGGER_APP_ANALYTICS =>
       log.info(s"triggered app analytics")
+      processingFiles = List.empty[File]
       FileUtils.getListOfFiles(logFileDirectory, logFileExtensions, logFilePrefixes) match {
         case Success(fs) => unprocessedFiles = unprocessedFiles ::: fs
                             self ! ANALYTICS_PROCESS_DONE
 
-        case Failure(ex) => mailLogError(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
+        case Failure(ex) => mailLogError(s"Error in reading files in configured directory. exception => ${ex.getLocalizedMessage}")
       }
 
     case ANALYTICS_PROCESS_DONE if !unprocessedFiles.isEmpty =>

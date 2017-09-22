@@ -6,7 +6,7 @@ import akka.actor.{ActorSystem, Props}
 /**
   * Created by rajeevprasanna on 9/15/17.
   */
-object Main extends App {
+object CalculatorMain extends App {
 
   val system = ActorSystem("calculator-actor-system")
   val persistentCalculatorActor = system.actorOf(Props[Calculator])

@@ -8,7 +8,7 @@ import scala.language.postfixOps
 /**
   * Created by rajeevprasanna on 9/18/17.
   */
-object Main extends App {
+object BasketMain extends App {
   val system = ActorSystem("basket-actor-system")
   val persistentBasketActor = system.actorOf(Props[BasketActor])
 

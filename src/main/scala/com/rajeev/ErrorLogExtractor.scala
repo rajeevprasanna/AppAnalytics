@@ -27,8 +27,8 @@ class ErrorLogExtractor extends Actor with ActorLogging with ConfigInitialzer {
     val lines:Iterator[String] = file.lineIterator
 
     //Create a new file to record all errors
-    val fileName = s"analytics${file.name}"
-    val errorLogFile:File = file"/tmp/$fileName"
+    val fileName = s"analytics_${file.name}"
+    val errorLogFile:File = file"${getString("app.outputDirectory")}/$fileName"
     errorLogFile.delete(true)
     errorLogFile.createIfNotExists()
 
