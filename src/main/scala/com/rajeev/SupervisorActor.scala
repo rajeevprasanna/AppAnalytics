@@ -10,13 +10,12 @@ import com.rajeev.utils.FileUtils
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
+import ActorCommands._
+
 /**
   * Created by rajeevprasanna on 9/21/17.
   */
 class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
-
-  val TRIGGER_APP_ANALYTICS = "TRIGGER_APP_ANALYTICS"
-  val ANALYTICS_PROCESS_DONE = "ANALYTICS_PROCESS_DONE"
 
   val scheduler = system.scheduler.schedule(0 milliseconds, 12 hours, self, TRIGGER_APP_ANALYTICS)
   val fileReaderActor = system.actorOf(Props[FileReader], "file-reader-actor")

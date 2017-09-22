@@ -57,7 +57,7 @@ class Calculator extends PersistentActor with ActorLogging {
 
     case PrintResult => println(s"The result is : ${state.result}")
 
-    case GetResult => sender() ! state.result
+    case GetResult => sender ! state.result
 
     case Clear => persist(Reset)(updateState)
   }

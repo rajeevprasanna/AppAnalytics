@@ -18,9 +18,9 @@ class ErrorLogExtractor extends Actor with ActorLogging with ConfigInitialzer {
 
   override def receive: Receive = {
     case errorLogFile: ExtractedFile =>
-              log.info(s"Receive log file for error patterns exraction. logFileName => ${errorLogFile.name}")
+              log.info(s"Receive log file for error patterns extraction. logFileName => ${errorLogFile.name}")
               val file:File = File(errorLogFile.fullPath)
-              sender() ! extractPatternRecords(file)
+              sender ! extractPatternRecords(file)
   }
 
   def extractPatternRecords = (file:File) => {

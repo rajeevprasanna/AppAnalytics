@@ -56,9 +56,9 @@ class BasketActor extends PersistentActor with ActorLogging {
             persist(ItemRemoved(productId)){
               itemRemovedEvent =>
                   updateState(itemRemovedEvent)
-                  sender() ! Some(itemRemovedEvent)
+                  sender ! Some(itemRemovedEvent)
             }
-          }else sender() ! None
+          }else sender ! None
 
 
     case UpdateItem(productId, amount, _) =>
@@ -66,10 +66,10 @@ class BasketActor extends PersistentActor with ActorLogging {
             persist(ItemUpdated(productId, amount)) {
               itemUpdatedEvent =>
                 updateState(itemUpdatedEvent)
-                sender() ! Some(itemUpdatedEvent)
+                sender ! Some(itemUpdatedEvent)
             }
           }else{
-            sender() ! None
+            sender ! None
           }
 
     case Replace(items, _) => persist(Replaced(items))(updateState)
@@ -83,13 +83,13 @@ class BasketActor extends PersistentActor with ActorLogging {
         saveSnapshot(BasketSnapshot(itemsInBasket))
     }
 
-    case GetItems(_) => sender() ! itemsInBasket
+    case GetItems(_) => sender ! itemsInBasket
 
     case PrintItems(_) =>
       log.info("Items in Basket:")
       log.info(s"$itemsInBasket")
 
-    case CountRecoveredEvents(_) => sender() ! RecoveredEventsCount(nrOfEventsRecovered)
+    case CountRecoveredEvents(_) => sender ! RecoveredEventsCount(nrOfEventsRecovered)
 
     case SaveSnapshotFailure(metadata, reason) =>
       log.error(s"Snapshot failed to save:")

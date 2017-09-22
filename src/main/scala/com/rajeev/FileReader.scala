@@ -5,6 +5,8 @@ import com.rajeev.models.Models._
 import com.rajeev.utils.MailGunUtils
 import better.files._
 
+import ActorCommands._
+
 /**
   * Created by rajeevprasanna on 9/19/17.
   */
@@ -18,7 +20,7 @@ class FileReader extends Actor with ActorLogging {
   override def receive: Receive = {
     case file:CompressedLogFile =>
             log.info("received file for error extraction. fileName => " + file.name)
-             supervisorActor = Some(sender())
+             supervisorActor = Some(sender)
             fileExtractor ! file
 
     case extractedLogFile:ExtractedFile =>
@@ -34,7 +36,7 @@ class FileReader extends Actor with ActorLogging {
             val f = file"${errorLogFile.fullPath}"
             f.delete(true)
 
-           supervisorActor.map(_ ! "ANALYTICS_PROCESS_DONE")
+           supervisorActor.map(_ ! ANALYTICS_PROCESS_DONE)
 
     case x => log.error(s"got event => $x")
   }

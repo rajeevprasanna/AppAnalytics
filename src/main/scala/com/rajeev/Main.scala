@@ -3,6 +3,8 @@ package com.rajeev
 import akka.actor.Props
 import org.slf4j.LoggerFactory
 
+import ActorCommands._
+
 /**
   * Created by rajeevprasanna on 9/13/17.
   */
@@ -12,7 +14,7 @@ object Main extends App with ConfigInitialzer {
   log.info(s"App analytics started running...")
 
   val supervisorActor = system.actorOf(Props[SupervisorActor], "supervisor-actor")
-  supervisorActor ! "TRIGGER_APP_ANALYTICS"
+  supervisorActor ! TRIGGER_APP_ANALYTICS
 }
 
 

@@ -15,7 +15,7 @@ class FileExtractor extends Actor with ActorLogging {
     case logfile:CompressedLogFile =>
           val file = new File(logfile.fullPath)
           val extractedFile = FileUtils.extractFile(file.getName, file.getParentFile.getPath)
-          sender() ! ExtractedFile(extractedFile.getName, extractedFile.getParentFile.getPath)
+          sender ! ExtractedFile(extractedFile.getName, extractedFile.getParentFile.getPath)
   }
 
 }
