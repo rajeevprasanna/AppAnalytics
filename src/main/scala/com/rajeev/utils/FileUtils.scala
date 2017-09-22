@@ -9,6 +9,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
 import scala.util.Try
 
+//Refer : https://github.com/pathikrit/better-files#streams
 
 /**
   * Created by rajeevprasanna on 9/19/17.

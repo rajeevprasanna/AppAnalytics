@@ -12,8 +12,8 @@ object Main extends App with ConfigInitialzer {
   final val log = LoggerFactory.getLogger(Main.getClass)
   log.info(s"App analytics started running...")
 
+  //start supervisor which will trigger analytics extraction using scheduler
   val supervisorActor = system.actorOf(Props[SupervisorActor], "supervisor-actor")
-  supervisorActor ! TRIGGER_APP_ANALYTICS
 }
 
 

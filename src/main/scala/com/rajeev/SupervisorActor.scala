@@ -5,7 +5,7 @@ import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props, SupervisorStra
 import better.files._
 import com.rajeev.ActorCommands._
 import com.rajeev.models.Models.CompressedLogFile
-import com.rajeev.utils.FileUtils
+import com.rajeev.utils.{FileUtils, MailGunUtils}
 
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -20,9 +20,8 @@ class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
 
   override def supervisorStrategy: SupervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 3, withinTimeRange = 60 minutes) {
-      case ex: Exception => //TODO : send email to developers informing about this halt case.
-            log.error(s"Exception occurred in child actor. ex => ${ex.getStackTrace}")
-            Restart
+      case ex: Exception => mailLogError(s"Exception occurred in child actor. ex => ${ex.getStackTrace}")
+                            Restart
     }
 
   val logFileDirectory:String = getString("app.logFileDirectory")
@@ -35,8 +34,7 @@ class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
   override def receive: Receive = {
 
     case TRIGGER_APP_ANALYTICS if !unprocessedFiles.isEmpty =>
-            log.error(s"files are not processed in the previous iteration. Immediately check the reason. current files => ${unprocessedFiles}")
-            //TODO : send email to developers informing about this halt case.
+            mailLogError(s"files are not processed in the previous iteration. Immediately check the reason. current files => ${unprocessedFiles}")
 
     case TRIGGER_APP_ANALYTICS =>
       log.info(s"triggered app analytics")
@@ -44,8 +42,7 @@ class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
         case Success(fs) => unprocessedFiles = unprocessedFiles ::: fs
                             self ! ANALYTICS_PROCESS_DONE
 
-        case Failure(ex) => log.error(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
-                            //TODO : send email to developers informing about this halt case.
+        case Failure(ex) => mailLogError(s"Error in reading files in configured directory. exception => ${ex.getStackTrace}")
       }
 
     case ANALYTICS_PROCESS_DONE if !unprocessedFiles.isEmpty =>
@@ -55,10 +52,15 @@ class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
                           unprocessedFiles = tail
                           processingFiles = head :: processingFiles
                           fileReaderActor ! CompressedLogFile(head)
-              case _ => assert(false, "this is unreachable case")
+              case m => assert(false, s"this is unreachable case. message => $m")
             }
 
-    case x => log.error(s"received some junk message. ${x}")
+    case m if m != ANALYTICS_PROCESS_DONE => log.error(s"received some junk message. $m")
+  }
+
+  def mailLogError = (errorMsg:String) => {
+    log.error(errorMsg)
+    MailGunUtils.sendTextMail(errorMsg)
   }
 
 }

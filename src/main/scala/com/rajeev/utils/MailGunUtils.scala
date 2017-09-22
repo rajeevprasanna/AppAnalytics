@@ -7,6 +7,7 @@ import better.files._
 import com.rajeev.ConfigInitialzer
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter
 import com.sun.jersey.api.client.{Client, ClientResponse}
+import com.sun.jersey.core.util.MultivaluedMapImpl
 import com.sun.jersey.multipart.FormDataMultiPart
 import com.sun.jersey.multipart.file.FileDataBodyPart
 
@@ -34,6 +35,18 @@ object MailGunUtils extends ConfigInitialzer {
     formData.bodyPart(new FileDataBodyPart("attachment", errorLogFile.toJava, MediaType.TEXT_PLAIN_TYPE))
 
     val response = webResource.`type`(MediaType.MULTIPART_FORM_DATA_TYPE).post(classOf[ClientResponse], formData)
+    val textEntity = response.getEntity(classOf[String])
+    assert(response.getStatus() == 200, textEntity)
+  }
+
+  def sendTextMail = (mailText:String) => {
+    val formData = new MultivaluedMapImpl()
+    formData.add("from", s"AppAnalytics<mailgun@$MAILGUN_DOMAIN_NAME>")
+    formData.add("to", getString("mailgun.toPpl"))
+    formData.add("subject", "Application Error : Plugin app analytics")
+    formData.add("html", s"<html><strong>${mailText}</strong></html>")
+
+    val response = webResource.`type`(MediaType.APPLICATION_FORM_URLENCODED).post(classOf[ClientResponse], formData)
     val textEntity = response.getEntity(classOf[String])
     assert(response.getStatus() == 200, textEntity)
   }
