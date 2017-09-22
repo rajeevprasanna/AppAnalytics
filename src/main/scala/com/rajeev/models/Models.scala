@@ -7,25 +7,19 @@ import better.files._
   */
 object Models {
 
-  trait AnalyticsFile {
-    def name:String
-    def directory:String
-    def fullPath = s"$directory/$name"
-    def toFile = file"$fullPath"
-  }
-
-  final case class CompressedLogFile(name:String, directory:String) extends AnalyticsFile
+  final case class CompressedLogFile(file:File)
   object CompressedLogFile {
-    def apply(file:File): CompressedLogFile = new CompressedLogFile(file.name, file.parent.pathAsString)
+    def apply(file:File): CompressedLogFile = new CompressedLogFile(file)
   }
 
-  final case class ExtractedFile(name:String, directory:String) extends AnalyticsFile
+  final case class ExtractedFile(file:File, compressedLogFile:CompressedLogFile)
   object ExtractedFile {
-    def apply(file:File): ExtractedFile = new ExtractedFile(file.name, file.parent.pathAsString)
+    def apply(extractedFile:File, compressedFile:CompressedLogFile): ExtractedFile = new ExtractedFile(extractedFile, compressedFile)
   }
 
-  final case class ErrorLogFile(name:String, directory:String) extends AnalyticsFile
+  final case class ErrorLogFile(file:File, extractedFile: ExtractedFile)
   object ErrorLogFile {
-    def apply(file:File): ErrorLogFile = new ErrorLogFile(file.name, file.parent.pathAsString)
+    def apply(errorLogFile:File, extractedFile:ExtractedFile): ErrorLogFile = new ErrorLogFile(errorLogFile, extractedFile)
   }
+
 }

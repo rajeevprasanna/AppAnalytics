@@ -1,10 +1,13 @@
 package com.rajeev.utils
 
-import better.files._
-import scala.util.Try
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import java.io.BufferedInputStream
 import java.nio.file.Files
+
+import better.files._
+import com.rajeev.models.Models.{CompressedLogFile, ExtractedFile}
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+
+import scala.util.Try
 
 
 /**
@@ -23,12 +26,12 @@ object FileUtils {
     }
   }
 
-  def extractFile(fileName:String, dirPath:String, outputDirectory:String): File = {
-    val inFile = file"$dirPath/$fileName"
+  def extractFile(compressedFile:CompressedLogFile, outputDirectory:String): ExtractedFile = {
+    val inFile = compressedFile.file
     val fin = Files.newInputStream(inFile.path)
     val in = new BufferedInputStream(fin)
 
-    val outFile = file"${outputDirectory}/${fileName.split(".gz").head}.log"
+    val outFile = file"${outputDirectory}/${inFile.name.split(inFile.extension.getOrElse("")).head}.log"
     val out = Files.newOutputStream(outFile.path)
     val gzIn = new GzipCompressorInputStream(in)
 
@@ -41,9 +44,7 @@ object FileUtils {
       }
     }
     out.close()
-    outFile
+    ExtractedFile(outFile, compressedFile)
   }
-
-
 
 }

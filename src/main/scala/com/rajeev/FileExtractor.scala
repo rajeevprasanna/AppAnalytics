@@ -1,8 +1,7 @@
 package com.rajeev
 
-import better.files._
-
 import akka.actor.{Actor, ActorLogging}
+import better.files._
 import com.rajeev.models.Models._
 import com.rajeev.utils.FileUtils
 
@@ -20,9 +19,6 @@ class FileExtractor extends Actor with ActorLogging with ConfigInitialzer {
   }
 
   override def receive: Receive = {
-    case logfile:CompressedLogFile =>
-          val file = file"${logfile.fullPath}"
-          val extractedFile = FileUtils.extractFile(file.name, file.parent.pathAsString, outputDirectory)
-          sender ! ExtractedFile(extractedFile.name, extractedFile.parent.pathAsString)
+    case logfile:CompressedLogFile => sender ! FileUtils.extractFile(logfile, outputDirectory)
   }
 }

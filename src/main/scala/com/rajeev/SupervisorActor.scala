@@ -1,16 +1,14 @@
 package com.rajeev
 
-import better.files._
-
 import akka.actor.SupervisorStrategy.Restart
 import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props, SupervisorStrategy}
+import better.files._
+import com.rajeev.ActorCommands._
 import com.rajeev.models.Models.CompressedLogFile
 import com.rajeev.utils.FileUtils
 
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
-
-import ActorCommands._
 
 /**
   * Created by rajeevprasanna on 9/21/17.

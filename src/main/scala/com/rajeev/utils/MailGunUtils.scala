@@ -2,8 +2,8 @@ package com.rajeev.utils
 
 
 import javax.ws.rs.core.MediaType
-import better.files._
 
+import better.files._
 import com.rajeev.ConfigInitialzer
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter
 import com.sun.jersey.api.client.{Client, ClientResponse}

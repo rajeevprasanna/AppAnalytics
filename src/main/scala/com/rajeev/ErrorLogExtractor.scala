@@ -1,9 +1,9 @@
 package com.rajeev
 
 import akka.actor.{Actor, ActorLogging}
-import com.rajeev.models.Models.{ErrorLogFile, ExtractedFile}
-import better.files._
 import better.files.Dsl.SymbolicOperations
+import better.files._
+import com.rajeev.models.Models.{ErrorLogFile, ExtractedFile}
 
 /**
   * Created by rajeevprasanna on 9/21/17.
@@ -18,12 +18,12 @@ class ErrorLogExtractor extends Actor with ActorLogging with ConfigInitialzer {
 
   override def receive: Receive = {
     case errorLogFile: ExtractedFile =>
-              log.info(s"Receive log file for error patterns extraction. logFileName => ${errorLogFile.name}")
-              val file:File = File(errorLogFile.fullPath)
-              sender ! extractPatternRecords(file)
+              log.info(s"Receive log file for error patterns extraction. logFileName => ${errorLogFile.file.name}")
+              sender ! extractPatternRecords(errorLogFile)
   }
 
-  def extractPatternRecords = (file:File) => {
+  def extractPatternRecords = (extractedFile: ExtractedFile) => {
+    val file = extractedFile.file
     val lines:Iterator[String] = file.lineIterator
 
     //Create a new file to record all errors
@@ -34,7 +34,7 @@ class ErrorLogExtractor extends Actor with ActorLogging with ConfigInitialzer {
 
     for {l <- lines} processLogRow(l, errorLogFile)
 
-    ErrorLogFile(fileName, "/tmp")
+    ErrorLogFile(errorLogFile, extractedFile)
   }
 
   def processLogRow = (row:String, errorLogFile:File) => {
