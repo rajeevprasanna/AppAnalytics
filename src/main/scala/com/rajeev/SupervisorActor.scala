@@ -15,7 +15,7 @@ import scala.util.{Failure, Success}
   */
 class SupervisorActor extends Actor with ConfigInitialzer with ActorLogging {
 
-  val scheduler = system.scheduler.schedule(0 milliseconds, 12 hours, self, TRIGGER_APP_ANALYTICS)
+  val scheduler = system.scheduler.schedule(0 milliseconds, 30 minutes, self, TRIGGER_APP_ANALYTICS)
   val fileReaderActor = system.actorOf(Props[FileReader], "file-reader-actor")
 
   override def supervisorStrategy: SupervisorStrategy =
